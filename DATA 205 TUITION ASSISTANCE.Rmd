@@ -1,0 +1,126 @@
+---
+title: "DATA 205: Montgomery County Tuition"
+author: "Jeremy Yee"
+date: "2/11/2022"
+output: html_document
+---
+
+### Exploratory Data Analysis of Tuition in Montgomery County
+
+### Dataset
+Data Montgomery: https://data.montgomerycountymd.gov/Education/Tuition-Assistance/p7z5-tjrz
+
+This dataset includes a list of classes approved and paid through the County tuition assistance program. Update Frequency: Twice a Year
+
+### Data Description
+
+The dataset consist of around 3,870 rows and 7 columns.
+
+#### Department
+* Name of the County Department to which the Employee is assigned
+
+#### Major
+* Name of a Major to which employee is currently pursuing
+
+#### Degree
+* Name of a Degree Program to which the employee is currently enrolled
+
+#### School
+* Name of a school/institution where employee took the course(s)
+
+#### Course Title
+* Name of a course/seminar/conference taken by the employee
+
+#### Course Description 
+* Brief description of the course/seminar/conference taken by the employee
+
+#### Cost
+* Amount of financial aid paid through the County tuition assistance program
+
+### Required Libraries
+```{r}
+library(tidyverse)
+library(ggplot2)
+library("knitr")
+library(dplyr)
+```
+
+### Data Preparation
+```{r}
+# Setting working directory
+setwd("C:/Users/Jerem/OneDrive/Documents")
+# Provide a fast and friendly way to read rectangular data
+library(readr)
+# rereading dataset into bees
+Tuition <- read_csv("Montgomery College/Spring 2022/DATA 205/Datasets/Tuition_Assistance.csv")
+#View(Tuition)
+```
+
+```{r}
+str(Tuition)
+```
+
+### Data Cleaning 
+Data is too complex and would interfere with the exporation. Therefore removed from the dataset.
+```{r}
+# Removing variables from the dataset
+Tuition$`Course Description` = NULL
+```
+
+There are 341 unique values in the School column. 
+```{r}
+unique(Tuition$School)
+```
+
+Due to the time limit and cleaning, this exploration is going to focus on one unique value. Since DATA 205 is a Montgomery College course, data is focus on Montgomery College.
+```{r}
+# Subsetting variable
+MC_Tuition <- subset(Tuition, Tuition$School == "Montgomery College Rockville Campus")
+```
+
+### Dataframe
+```{r}
+MC_Tuition %>% head() %>% knitr::kable()
+```
+
+The new dataframe consist of 215 rows and 6 columns.
+
+### EDA
+```{r}
+# Barplot of MC Departments
+ggplot(MC_Tuition, aes(x = Department, y = Cost, fill = Department)) +
+  geom_bar(stat = 'identity') +
+  coord_flip() +
+  theme(legend.position = "none") +
+  labs(title = "Tuition Towards MC Departments",
+       x = "Departments",
+       y = "Cost (USD)")
+```
+
+The department of General Service has the highest tuition.
+
+```{r}
+# Barplot of MC Majors
+ggplot(MC_Tuition, aes(x = Major, y = Cost, fill = Major)) +
+  geom_bar(stat = 'identity') +
+  coord_flip() +
+  theme(legend.position = "none") +
+  labs(title = "Tuition Towards each Major",
+       x = "Major",
+       y = "Cost (USD)")
+
+```
+
+Business/Admin./Mgmt. majors are the most likey to earn a higher tuition according to the data. But this can also mean that majority of the school body is Business/Admin./Mgmt. majors.
+
+```{r}
+# Barplot of MC Degree
+ggplot(MC_Tuition, aes(x = Degree, y = Cost, fill = Degree)) +
+  geom_bar(stat = 'identity') +
+  theme(legend.position = "none") +
+  labs(title = "Tuition Towards MC Degree",
+       x = "Degree",
+       y = "Cost (USD)")
+```
+
+Majority of the tuition is towards an Assoicates degree. This is because Montgomery College's academic program usually prepare students to earn an associates degree so they can transfer to a four year college. 
